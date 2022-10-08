@@ -149,6 +149,8 @@ impl Client {
         // Also note that we explicitly don't handle EINTR here. That's used
         // to shut us down, so we otherwise punt all errors upwards.
         unsafe {
+            set_nonblocking(self.read.as_raw_fd(), true)?; // Otherwise we hang instead of getting
+                                                           // WouldBlock
             let mut fd: libc::pollfd = mem::zeroed();
             fd.fd = self.read.as_raw_fd();
             fd.events = libc::POLLIN;
